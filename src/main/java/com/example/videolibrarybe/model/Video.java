@@ -1,6 +1,9 @@
 package com.example.videolibrarybe.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 import java.util.Set;
@@ -9,6 +12,7 @@ import static jakarta.persistence.FetchType.EAGER;
 
 @Entity
 @Table(name = "videos")
+@AllArgsConstructor @NoArgsConstructor @Getter
 public class Video {
     @Id
     @Column(name = "video_id")
