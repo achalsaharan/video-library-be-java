@@ -35,7 +35,6 @@ public class UserController {
 
     @GetMapping("/users")
     public List<UserDTO> findAllUsers() {
-//        log.info("achal");
         return userService.getAllUsers();
     }
 
