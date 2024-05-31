@@ -2,16 +2,11 @@ package com.example.videolibrarybe.controller;
 
 import com.example.videolibrarybe.dto.UserCreationRequestDTO;
 import com.example.videolibrarybe.dto.UserDTO;
-import com.example.videolibrarybe.mapper.SimpleMapper;
-import com.example.videolibrarybe.model.User;
-import com.example.videolibrarybe.repository.UserRepository;
 import com.example.videolibrarybe.service.UserService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -27,13 +22,18 @@ public class UserController {
     }
 
     @PostMapping("/user")
-    public UserDTO addUser(@RequestBody UserCreationRequestDTO userCreationRequestDTO) {
-        return userService.createUser(userCreationRequestDTO);
+    public ResponseEntity<UserDTO> createUser(@RequestBody UserCreationRequestDTO userCreationRequestDTO) {
+        return new ResponseEntity<>(userService.createUser(userCreationRequestDTO), HttpStatus.CREATED);
+    }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<UserDTO> getUser(@PathVariable("userId") String userId) {
+        return new ResponseEntity<>(userService.getUser(userId), HttpStatus.OK);
     }
 
     @GetMapping("/users")
-    public List<UserDTO> findAllUsers() {
-        return userService.getAllUsers();
+    public ResponseEntity<List<UserDTO>> findAllUsers() {
+        return new ResponseEntity<>(userService.getAllUsers(), HttpStatus.OK);
     }
 
 }
