@@ -5,6 +5,7 @@ import com.example.videolibrarybe.dto.UserDTO;
 import com.example.videolibrarybe.mapper.SimpleMapper;
 import com.example.videolibrarybe.model.User;
 import com.example.videolibrarybe.repository.UserRepository;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -34,9 +35,8 @@ public class UserServiceImpl implements com.example.videolibrarybe.service.UserS
     }
 
     @Override
-    public UserDTO getUser(String userId) {
-        // todo add validation to userId
-        Optional<User> user = userRepository.findById(Integer.valueOf(userId));
+    public UserDTO getUser(Integer userId) {
+        Optional<User> user = userRepository.findById(userId);
         if(user.isEmpty()){
             //todo exception handling
             throw new RuntimeException("user not found");
