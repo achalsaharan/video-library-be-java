@@ -1,5 +1,6 @@
 package com.example.videolibrarybe.service.Implementation;
 
+import com.example.videolibrarybe.dto.UserCreationRequestDTO;
 import com.example.videolibrarybe.dto.UserDTO;
 import com.example.videolibrarybe.mapper.SimpleMapper;
 import com.example.videolibrarybe.model.User;
@@ -26,8 +27,10 @@ public class UserServiceImpl implements com.example.videolibrarybe.service.UserS
 //    Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
     @Override
-    public User createUser() {
-        return null;
+    public UserDTO createUser(UserCreationRequestDTO userCreationRequestDTO) {
+        User user = simpleMapper.userCreationRequestDTOToUserEntity(userCreationRequestDTO);
+        userRepository.save(user);
+        return simpleMapper.userEntityToDTO(user);
     }
 
     // todo is there any advantages to returning Iterable<UserDTO>?
@@ -35,11 +38,10 @@ public class UserServiceImpl implements com.example.videolibrarybe.service.UserS
     public List<UserDTO> getAllUsers() {
         List<User> userEntities = (List<User>) userRepository.findAll();
         log.info(userEntities.toString());
-        List<UserDTO> userDTOS = userEntities
+
+        return userEntities
                 .stream()
                 .map(simpleMapper::userEntityToDTO)
                 .toList();
-
-        return userDTOS;
     }
 }
