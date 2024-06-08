@@ -1,5 +1,7 @@
 package com.example.videolibrarybe.exception;
 
+import com.example.videolibrarybe.rest.RestResponseErrorBody;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -15,13 +17,14 @@ import java.util.List;
 import java.util.Objects;
 
 @ControllerAdvice
+@Slf4j
 public class ControllerExceptionHandler {
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    ResponseEntity<String> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex) {
+    ResponseEntity<Object> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex) {
         String message = "Method argument type mismatch: " + ex.getName() +
                 " should be of type " + Objects.requireNonNull(ex.getRequiredType()).getSimpleName();
-        return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new RestResponseErrorBody(message), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -35,6 +38,13 @@ public class ControllerExceptionHandler {
                 errors.add(error.getDefaultMessage());
             }
         }
-        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new RestResponseErrorBody("method argument invalid", errors), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    ResponseEntity<Object> handleException(Exception ex) {
+        log.error(ex.getMessage());
+        return new ResponseEntity<>(new RestResponseErrorBody(ex.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
