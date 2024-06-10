@@ -1,5 +1,6 @@
 package com.example.videolibrarybe.model;
 
+import com.example.videolibrarybe.constants.UserRoles;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -30,6 +31,10 @@ public class User {
 
     @Column(name = "password")
     private String password;
+
+    @Column(name = "role")
+    @Enumerated(EnumType.STRING)
+    private UserRoles role;
 
     @OneToMany(mappedBy = "user")
     @ToString.Exclude
