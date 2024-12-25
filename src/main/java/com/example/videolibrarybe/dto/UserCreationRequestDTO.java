@@ -8,6 +8,6 @@ public record UserCreationRequestDTO(
         String firstName,
         String lastName,
         @NotEmpty(message = "emailId should not be empty")
-        @Email(message = "emailId should be a valid email")
+        @Email(message = "emailId should be a valid username")
         String emailId,
         String password) {}

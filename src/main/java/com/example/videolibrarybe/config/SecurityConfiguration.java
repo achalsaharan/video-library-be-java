@@ -1,76 +1,59 @@
 package com.example.videolibrarybe.config;
 
-import com.example.videolibrarybe.service.Implementation.SpringSecurityCustomUserDetailService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
+@EnableWebSecurity
 public class SecurityConfiguration {
 
-    private final SpringSecurityCustomUserDetailService springSecurityCustomUserDetailService;
+    private final AuthenticationProvider authenticationProvider;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
-    @Autowired
-    public SecurityConfiguration(SpringSecurityCustomUserDetailService springSecurityCustomUserDetailService) {
-        this.springSecurityCustomUserDetailService = springSecurityCustomUserDetailService;
+    public SecurityConfiguration(AuthenticationProvider authenticationProvider, JwtAuthenticationFilter jwtAuthenticationFilter) {
+        this.authenticationProvider = authenticationProvider;
+        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
     }
+
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http.csrf()
+                .disable()
+                .authorizeHttpRequests()
+                .requestMatchers("/auth/**").permitAll()
+                .anyRequest()
+                .authenticated()
+                .and()
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .authenticationProvider(authenticationProvider)
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
     }
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity.csrf(csrf -> csrf.disable())
-//                .authorizeHttpRequests(authorize ->
-//                        authorize.anyRequest().permitAll()
-//                )
-                .authorizeHttpRequests(authorise ->
-                        authorise
-                                .requestMatchers("/user**")
-                                .anonymous().requestMatchers(HttpMethod.GET)
-                                .authenticated()
-                                .anyRequest().permitAll()
-
-                )
-                .httpBasic(Customizer.withDefaults());
-
-        return httpSecurity.build();
-    }
-
-    @Bean
-    public AuthenticationProvider authenticationProvider(){
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setUserDetailsService(springSecurityCustomUserDetailService);
-        provider.setPasswordEncoder(passwordEncoder());
-        return provider;
-
-    }
-
-    // in memory users
 //    @Bean
-//    public UserDetailsService userDetailsService() {
+//    public CorsConfigurationSource corsConfigurationSource() {
+//        CorsConfiguration configuration = new CorsConfiguration();
 //
-//        UserDetails normalUser = User.withUsername("userNormal")
-//                .password(passwordEncoder().encode("userNormal"))
-//                .roles("NORMAL")
-//                .build();
+//        configuration.setAllowedOrigins(List.of("http://localhost:8005"));
+//        configuration.setAllowedMethods(List.of("GET","POST"));
+//        configuration.setAllowedHeaders(List.of("Authorization","Content-Type"));
 //
-//        UserDetails adminUser = User.withUsername("userAdmin")
-//                .password(passwordEncoder().encode("userAdmin"))
-//                .roles("ADMIN")
-//                .build();
+//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 //
-//        return new InMemoryUserDetailsManager(normalUser, adminUser);
+//        source.registerCorsConfiguration("/**",configuration);
 //
+//        return source;
 //    }
+
 }
