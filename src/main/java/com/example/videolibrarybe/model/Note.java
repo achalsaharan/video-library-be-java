@@ -2,9 +2,12 @@ package com.example.videolibrarybe.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "notes")
+@AllArgsConstructor @NoArgsConstructor @Getter
 public class Note {
     @Id
     @Column(name = "note_id")
