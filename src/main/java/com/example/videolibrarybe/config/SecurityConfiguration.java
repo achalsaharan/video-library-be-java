@@ -13,7 +13,9 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import java.util.List;
+import java.util.Arrays;
+import java.util.Collections;
+
 
 @Configuration
 @EnableWebSecurity
@@ -31,8 +33,9 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable()) // Disable CSRF
+                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Cors config
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**").permitAll() // Allow login and registration
+                        .requestMatchers("/auth/**", "/videos").permitAll() // Allow login and registration
                         .anyRequest().authenticated()           // Secure all other endpoints
                 )
                 .sessionManagement(session -> session
@@ -44,12 +47,13 @@ public class SecurityConfiguration {
         return http.build();
     }
 
-    @Bean
+//    @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:8005"));
-        configuration.setAllowedMethods(List.of("GET", "POST"));
-        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+        configuration.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
+        configuration.setAllowedMethods(Arrays.asList("GET","POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
+        configuration.setExposedHeaders(Arrays.asList("Authorization", "content-type"));
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "content-type"));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
