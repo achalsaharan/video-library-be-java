@@ -1,5 +1,6 @@
 package com.example.videolibrarybe.service.Implementation;
 
+import com.example.videolibrarybe.dto.DetailedVideoResponseDTO;
 import com.example.videolibrarybe.dto.VideoResponseDTO;
 import com.example.videolibrarybe.mapper.SimpleMapper;
 import com.example.videolibrarybe.model.Video;
@@ -9,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -33,4 +35,18 @@ public class VideoServiceImpl implements VideoService {
                 .map(simpleMapper::videoEntityToVideoResponseDTO)
                 .toList();
     }
+
+    @Override
+    public DetailedVideoResponseDTO getVideo(String videoId) {
+        Optional<Video> videoOptional = videoRepository.findById(videoId);
+
+        if(videoOptional.isPresent()) {
+            Video video = videoOptional.get();
+            return simpleMapper.videoEntityToDetailedVideoResponseDTO(video);
+        } else {
+            // todo is this the correct type of exception to be thrown
+            throw new RuntimeException("video id does not exist");
+        }
+    }
+
 }

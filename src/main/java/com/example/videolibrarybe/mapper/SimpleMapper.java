@@ -1,9 +1,6 @@
 package com.example.videolibrarybe.mapper;
 
-import com.example.videolibrarybe.dto.AuthenticationUserDTO;
-import com.example.videolibrarybe.dto.UserCreationRequestDTO;
-import com.example.videolibrarybe.dto.UserDTO;
-import com.example.videolibrarybe.dto.VideoResponseDTO;
+import com.example.videolibrarybe.dto.*;
 import com.example.videolibrarybe.model.User;
 import com.example.videolibrarybe.model.Video;
 import org.mapstruct.Mapper;
@@ -22,4 +19,6 @@ public interface SimpleMapper {
     AuthenticationUserDTO userEntityToAuthenticationUserDTO(User user);
 
     VideoResponseDTO videoEntityToVideoResponseDTO (Video video);
+
+    DetailedVideoResponseDTO videoEntityToDetailedVideoResponseDTO (Video video);
 }
