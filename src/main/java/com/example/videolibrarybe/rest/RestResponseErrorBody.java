@@ -6,7 +6,7 @@ import java.util.List;
 
 @Getter
 public class RestResponseErrorBody {
-    private final Boolean errorExists = true;
+    private final Boolean success = false;
     private final String errorMessage;
     private List<String> errors;
 

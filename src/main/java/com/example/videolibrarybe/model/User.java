@@ -33,6 +33,7 @@ public class User implements UserDetails {
     private String emailId;
 
     @Column(name = "password")
+    @ToString.Exclude
     private String password;
 
     @Column(name = "role")
@@ -47,7 +48,7 @@ public class User implements UserDetails {
     @ToString.Exclude
     private Set<Note> notes;
 
-    @ToString.Include
+//    @ToString.Include
     public String playListIds() {
         StringBuilder playListIds = new StringBuilder();
         for (PlayList playList : playLists) {
