@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.util.List;
 import java.util.Set;
@@ -13,6 +14,7 @@ import static jakarta.persistence.FetchType.EAGER;
 @Entity
 @Table(name = "videos")
 @AllArgsConstructor @NoArgsConstructor @Getter
+@ToString
 public class Video {
     @Id
     @Column(name = "video_id")
@@ -28,6 +30,7 @@ public class Video {
     private int views;
 
     @OneToMany(mappedBy = "video")
+    @ToString.Exclude
     private Set<Note> notes;
 
     /**
@@ -41,6 +44,7 @@ public class Video {
      * and ensure consistency in the relationship mapping.
      */
     @ManyToMany(mappedBy = "videos")
+    @ToString.Exclude
     private List<PlayList> playLists;
 
 }
