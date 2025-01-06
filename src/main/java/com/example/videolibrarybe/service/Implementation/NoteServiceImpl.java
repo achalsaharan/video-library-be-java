@@ -13,6 +13,8 @@ import com.example.videolibrarybe.utils.SecurityUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Slf4j
 @Service
 public class NoteServiceImpl implements NoteService {
@@ -44,5 +46,26 @@ public class NoteServiceImpl implements NoteService {
         log.info("save note: {}", savedNote);
 
         return simpleMapper.noteEntityToNoteResponseDTO(savedNote);
+    }
+
+    @Override
+    public NoteResponseDTO getNote(String noteId) {
+        Note note = noteRepository.findById(Integer.parseInt(noteId))
+                .orElseThrow(() -> new IllegalArgumentException("noteId does note exist"));
+
+        return simpleMapper.noteEntityToNoteResponseDTO(note);
+    }
+
+    @Override
+    public List<NoteResponseDTO> getNotesByVideo(String videoId) {
+        User user = SecurityUtils.getUserInfo();
+
+        List<Note> notes = noteRepository.findAllByUser_UserIdAndVideo_VideoId(user.getUserId(), videoId);
+
+        List<NoteResponseDTO> notesResponseDTO = notes.stream()
+                .map(simpleMapper::noteEntityToNoteResponseDTO)
+                .toList();
+
+        return notesResponseDTO;
     }
 }
