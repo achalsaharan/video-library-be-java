@@ -2,7 +2,9 @@ package com.example.videolibrarybe.controller;
 
 import com.example.videolibrarybe.dto.NoteCreationRequestDTO;
 import com.example.videolibrarybe.dto.NoteResponseDTO;
+import com.example.videolibrarybe.rest.RestResponseSuccessBody;
 import com.example.videolibrarybe.service.NoteService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,18 +19,20 @@ public class NoteController {
     }
 
     @PostMapping("/notes")
-    public NoteResponseDTO createNote(@RequestBody NoteCreationRequestDTO noteCreationRequestDTO) {
-        return noteService.createNote(noteCreationRequestDTO);
+    public ResponseEntity<RestResponseSuccessBody<NoteResponseDTO>> createNote(@RequestBody NoteCreationRequestDTO noteCreationRequestDTO) {
+        return ResponseEntity.ok(new RestResponseSuccessBody<>(noteService.createNote(noteCreationRequestDTO)));
+
     }
 
     @GetMapping("/notes/{noteId}")
-    public NoteResponseDTO getNote(@PathVariable String noteId) {
-        return noteService.getNote(noteId);
+    public ResponseEntity<RestResponseSuccessBody<NoteResponseDTO>> getNote(@PathVariable String noteId) {
+        return ResponseEntity.ok(new RestResponseSuccessBody<>(noteService.getNote(noteId)));
     }
 
+    // Get notes for a video id for the logged-in user
     @GetMapping("/notes")
-    public List<NoteResponseDTO> getNotesByVideo(@RequestParam String videoId) {
-        return noteService.getNotesByVideo(videoId);
+    public ResponseEntity<RestResponseSuccessBody<List<NoteResponseDTO>>> getNotesByVideo(@RequestParam String videoId) {
+        return ResponseEntity.ok(new RestResponseSuccessBody<>(noteService.getNotesByVideo(videoId)));
     }
 
 }
